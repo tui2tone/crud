@@ -215,29 +215,6 @@ export class TypeOrmCrudService<T> extends CrudService<T> {
     const hasOr = isArrayFull(parsed.or);
 
     if (hasFilter && hasOr) {
-      if (filters.length === 1 && parsed.or.length === 1) {
-        // WHERE :filter OR :or
-        this.setOrWhere(filters[0], `filter0`, builder);
-        this.setOrWhere(parsed.or[0], `or0`, builder);
-      } else if (filters.length === 1) {
-        this.setAndWhere(filters[0], `filter0`, builder);
-        builder.orWhere(
-          new Brackets((qb) => {
-            for (let i = 0; i < parsed.or.length; i++) {
-              this.setAndWhere(parsed.or[i], `or${i}`, qb as any);
-            }
-          }),
-        );
-      } else if (parsed.or.length === 1) {
-        this.setAndWhere(parsed.or[0], `or0`, builder);
-        builder.orWhere(
-          new Brackets((qb) => {
-            for (let i = 0; i < filters.length; i++) {
-              this.setAndWhere(filters[i], `filter${i}`, qb as any);
-            }
-          }),
-        );
-      } else {
         builder.andWhere(
           new Brackets((qb) => {
             for (let i = 0; i < filters.length; i++) {
@@ -245,14 +222,13 @@ export class TypeOrmCrudService<T> extends CrudService<T> {
             }
           }),
         );
-        builder.orWhere(
+        builder.andWhere(
           new Brackets((qb) => {
             for (let i = 0; i < parsed.or.length; i++) {
-              this.setAndWhere(parsed.or[i], `or${i}`, qb as any);
+              this.setOrWhere(parsed.or[i], `or${i}`, qb as any);
             }
           }),
         );
-      }
     } else if (hasOr) {
       // WHERE :or OR :or OR ...
       for (let i = 0; i < parsed.or.length; i++) {
