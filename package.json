@@ -1,12 +1,11 @@
 {
-  "name": "@nestjsx/crud",
+  "name": "nestjsx-crud",
   "version": "4.0.0",
   "description": "Nest CRUD for RESTful APIs",
   "license": "MIT",
   "workspaces": [
     "packages/*"
   ],
-  "private": true,
   "scripts": {
     "bootstrap": "npx lerna bootstrap",
     "s": "npx nps",
